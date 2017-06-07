@@ -1,9 +1,16 @@
 var express = require('express');
 var router = express.Router();
+var moment = require('moment-timezone');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Timezone Change Countdown' });
+  var data = {
+    title: 'Timezone Change Countdown'
+  };
+  
+  data.zones = moment.tz.names();
+  
+  res.render('index', data);
 });
 
 module.exports = router;
