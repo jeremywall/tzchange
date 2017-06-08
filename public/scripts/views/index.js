@@ -36,6 +36,7 @@ $(function() {
     $('<tr/>').append($('<th/>').text('Countdown')).append($('<th/>').text('Zone'))
   );
 
+  $('span#tz-data-version').text(moment.tz.dataVersion);
   $('table#countdown thead').replaceWith($thead);
   $('table#countdown tbody').replaceWith($tbody);
 });
