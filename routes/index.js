@@ -8,8 +8,6 @@ router.get('/', function(req, res, next) {
     title: 'Timezone Change Countdown'
   };
   
-  data.zones = moment.tz.names();
-  
   res.render('index', data);
 });
 

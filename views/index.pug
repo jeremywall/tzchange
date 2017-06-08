@@ -1,11 +1,12 @@
 extends layout
 
-block onready
-  script(type='text/javascript').
-    $(function() {
-      var zones = "#{zones}";
-    });
+block head
+  script(type='text/javascript', src='/scripts/vendor/moment/moment.js')
+  script(type='text/javascript', src='/scripts/vendor/moment/moment-timezone-with-data.js')
+  script(type='text/javascript', src='/scripts/views/index.js')
 
 block content
   h1= title
   p
+    table#countdown
+      tbody
