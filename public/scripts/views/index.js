@@ -40,7 +40,7 @@ $(function() {
     if (nextChangeDiff.d < 30) {
       $tr.addClass('danger');
     }
-    $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's ' + nextChangeEpochMillis));
+    $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
     $tr.append($('<td/>').text(rowData.zone.name));
     //$tr.append($('<td/>').text(moment.tz(nextChangeEpochMillis, rowData.zone.name).format('YYYY-MM-DD HH:mm:ss')));
     //$tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss')));
