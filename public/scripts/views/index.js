@@ -9,31 +9,54 @@ $(function() {
     var nextChangeEpochMillis = zone.untils[nextChangeIndex];
     if (_.isFinite(nextChangeEpochMillis)) {
       rowsData.push({
-        zoneName: zoneName,
-        nextChangeEpochMillis: nextChangeEpochMillis
+        zone: zone,
+        nextChangeIndex: nextChangeIndex
       });
     }
   });
-  rowsData = _.orderBy(rowsData, ['nextChangeEpochMillis', 'zoneName'], ['asc', 'asc']);
+  rowsData = _.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
   $.each(rowsData, function(index, rowData) {
-    var $tr = $('<tr/>')
-    var diffSecs = Math.floor((rowData.nextChangeEpochMillis - epochMillis) / 1000);
-    var diff = {
-      d: Math.floor(diffSecs / 86400),
-      h: Math.floor(diffSecs % 86400 / 3600) ,
-      m: Math.floor(diffSecs % 86400 % 3600 / 60),
-      s: Math.floor(diffSecs % 86400 % 3600 % 60)
+    var nextChangeEpochMillis = rowData.zone.untils[rowData.nextChangeIndex];
+    var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - epochMillis) / 1000);
+    var nextChangeDiff = {
+      d: Math.floor(nextChangeDiffSecs / 86400),
+      h: Math.floor(nextChangeDiffSecs % 86400 / 3600) ,
+      m: Math.floor(nextChangeDiffSecs % 86400 % 3600 / 60),
+      s: Math.floor(nextChangeDiffSecs % 86400 % 3600 % 60)
     };
-    if (diff.d < 30) {
+    var currOffsetMins = -1 * rowData.zone.offset(epochMillis);
+    var currOffset = {
+      p: (currOffsetMins < 0) ? '-' : '+',
+      h: Math.floor(Math.abs(currOffsetMins) / 60),
+      m: Math.floor(Math.abs(currOffsetMins) % 60)
+    };
+    var nextOffsetMins = -1 * rowData.zone.offset(nextChangeEpochMillis);
+    var nextOffset = {
+      p: (nextOffsetMins < 0) ? '-' : '+',
+      h: Math.floor(Math.abs(nextOffsetMins) / 60),
+      m: Math.floor(Math.abs(nextOffsetMins) % 60)
+    };
+    var $tr = $('<tr/>')
+    if (nextChangeDiff.d < 30) {
       $tr.addClass('danger');
     }
-    $tr.append($('<td/>').text(diff.d + 'd ' + diff.h + 'h ' + diff.m + 'm ' + diff.s + 's'));
-    $tr.append($('<td/>').text(rowData.zoneName));
+    $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's ' + nextChangeEpochMillis));
+    $tr.append($('<td/>').text(rowData.zone.name));
+    //$tr.append($('<td/>').text(moment.tz(nextChangeEpochMillis, rowData.zone.name).format('YYYY-MM-DD HH:mm:ss')));
+    //$tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss')));
+    $tr.append($('<td/>').text('UTC' + currOffset.p + _.padStart(currOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
+    $tr.append($('<td/>').text('UTC' + nextOffset.p + _.padStart(nextOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
     $tbody.append($tr);
   });
 
   var $thead = $('<thead/>').append(
-    $('<tr/>').append($('<th/>').text('Countdown')).append($('<th/>').text('Zone'))
+    $('<tr/>')
+      .append($('<th/>').text('Countdown'))
+      .append($('<th/>').text('Zone'))
+      //.append($('<th/>').text('Change Local'))
+      //.append($('<th/>').text('Change UTC'))
+      .append($('<th/>').text('Offset Before'))
+      .append($('<th/>').text('Offset After'))
   );
 
   $('span#tz-data-version').text(moment.tz.dataVersion);
