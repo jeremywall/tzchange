@@ -1,11 +1,11 @@
 $(function() {
   var zones = moment.tz.names();
   var $tbody = $('<tbody/>');
-  var epochMillis = Date.now();
+  var nowMoment = moment();
   var rowsData = [];
   $.each(zones, function(index, zoneName) {
     var zone = moment.tz.zone(zoneName);
-    var nextChangeIndex = _.sortedIndex(zone.untils, epochMillis);
+    var nextChangeIndex = _.sortedIndex(zone.untils, nowMoment.valueOf());
     var nextChangeEpochMillis = zone.untils[nextChangeIndex];
     if (_.isFinite(nextChangeEpochMillis)) {
       rowsData.push({
@@ -17,14 +17,14 @@ $(function() {
   rowsData = _.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
   $.each(rowsData, function(index, rowData) {
     var nextChangeEpochMillis = rowData.zone.untils[rowData.nextChangeIndex];
-    var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - epochMillis) / 1000);
+    var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - nowMoment.valueOf()) / 1000);
     var nextChangeDiff = {
       d: Math.floor(nextChangeDiffSecs / 86400),
       h: Math.floor(nextChangeDiffSecs % 86400 / 3600) ,
       m: Math.floor(nextChangeDiffSecs % 86400 % 3600 / 60),
       s: Math.floor(nextChangeDiffSecs % 86400 % 3600 % 60)
     };
-    var currOffsetMins = -1 * rowData.zone.offset(epochMillis);
+    var currOffsetMins = -1 * rowData.zone.offset(nowMoment.valueOf());
     var currOffset = {
       p: (currOffsetMins < 0) ? '-' : '+',
       h: Math.floor(Math.abs(currOffsetMins) / 60),
