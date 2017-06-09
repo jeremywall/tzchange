@@ -42,8 +42,6 @@ $(function() {
     }
     $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
     $tr.append($('<td/>').text(rowData.zone.name));
-    //$tr.append($('<td/>').text(moment.tz(nextChangeEpochMillis, rowData.zone.name).format('YYYY-MM-DD HH:mm:ss')));
-    //$tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss')));
     $tr.append($('<td/>').text('UTC' + currOffset.p + _.padStart(currOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
     $tr.append($('<td/>').text('UTC' + nextOffset.p + _.padStart(nextOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
     $tbody.append($tr);
@@ -53,8 +51,6 @@ $(function() {
     $('<tr/>')
       .append($('<th/>').text('Countdown'))
       .append($('<th/>').text('Zone'))
-      //.append($('<th/>').text('Change Local'))
-      //.append($('<th/>').text('Change UTC'))
       .append($('<th/>').text('Offset Before'))
       .append($('<th/>').text('Offset After'))
   );
