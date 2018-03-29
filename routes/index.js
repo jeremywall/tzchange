@@ -10,4 +10,9 @@ router.get('/', function(req, res, next) {
   res.render('index', data);
 });
 
+/* GET JSON data. */
+router.get('/next-change.json', function(req, res, next) {
+  res.send('{}');
+});
+
 module.exports = router;
