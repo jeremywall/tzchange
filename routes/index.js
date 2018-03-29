@@ -1,6 +1,6 @@
 var express = require('express');
 var _ = require('lodash');
-var moment = require('moment');
+var moment = require('moment-timezone');
 
 var router = express.Router();
 
