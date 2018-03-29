@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 
 /* GET JSON data. */
 router.get('/next-change.json', function(req, res, next) {
-  res.send('{}');
+  res.json({});
 });
 
 module.exports = router;
