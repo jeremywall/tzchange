@@ -51,7 +51,7 @@ $(function() {
   var $thead = $('<thead/>').append(
     $('<tr/>')
       .append($('<th/>').text('Countdown'))
-      .append($('<th/>').text('UTC Time of Change'))
+      .append($('<th/>').text('Epoch of Change'))
       .append($('<th/>').text('Zone'))
       .append($('<th/>').text('Offset Before'))
       .append($('<th/>').text('Offset After'))
