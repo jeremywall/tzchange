@@ -9,3 +9,7 @@ body {
 p {
   font-family: 'Roboto', sans-serif;
 }
+
+tr.time-zone-break {
+  border-top: double;
+}
