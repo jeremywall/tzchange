@@ -39,7 +39,7 @@ $(function() {
 
     var newBlockOfZones = false;
     if (index > 0) {
-      var prevRowData = rowsData[index];
+      var prevRowData = rowsData[index - 1];
       if (nextChangeEpochMillis != prevRowData.zone.untils[prevRowData.nextChangeIndex]) {
         newBlockOfZones = true;
       }
