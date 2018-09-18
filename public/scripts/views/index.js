@@ -36,7 +36,19 @@ $(function() {
       h: Math.floor(Math.abs(nextOffsetMins) / 60),
       m: Math.floor(Math.abs(nextOffsetMins) % 60)
     };
+
+    var newBlockOfZones = false;
+    if (index > 0) {
+      var prevRowData = rowsData[index];
+      if (nextChangeEpochMillis != prevRowData.zone.untils[prevRowData.nextChangeIndex]) {
+        newBlockOfZones = true;
+      }
+    }
+    
     var $tr = $('<tr/>')
+    if (newBlockOfZones) {
+      $tr.addClass('time-zone-break');
+    }
     if (nextChangeDiff.d < 15) {
       $tr.addClass('table-danger');
     } else if (nextChangeDiff.d < 30) {
