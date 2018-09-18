@@ -38,7 +38,7 @@ $(function() {
     };
     var $tr = $('<tr/>')
     if (nextChangeDiff.d < 30) {
-      $tr.addClass('danger');
+      $tr.addClass('table-danger');
     }
     $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
     $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
