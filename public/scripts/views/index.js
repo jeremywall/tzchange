@@ -48,7 +48,7 @@ $(function() {
     $tbody.append($tr);
   });
 
-  var $thead = $('<thead/>').append(
+  var $thead = $('<thead class="thead-dark"/>').append(
     $('<tr/>')
       .append($('<th/>').text('Countdown'))
       .append($('<th/>').text('Epoch of Change'))
