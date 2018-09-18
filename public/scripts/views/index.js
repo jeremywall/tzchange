@@ -37,8 +37,10 @@ $(function() {
       m: Math.floor(Math.abs(nextOffsetMins) % 60)
     };
     var $tr = $('<tr/>')
-    if (nextChangeDiff.d < 30) {
+    if (nextChangeDiff.d < 15) {
       $tr.addClass('table-danger');
+    } else if (nextChangeDiff.d < 30) {
+      $tr.addClass('table-warning');
     }
     $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
     $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
