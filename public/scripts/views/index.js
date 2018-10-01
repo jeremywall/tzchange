@@ -24,13 +24,13 @@ $(function() {
       m: Math.floor(nextChangeDiffSecs % 86400 % 3600 / 60),
       s: Math.floor(nextChangeDiffSecs % 86400 % 3600 % 60)
     };
-    var currOffsetMins = -1 * rowData.zone.offset(nowMoment.valueOf());
+    var currOffsetMins = -1 * rowData.zone.utcOffset(nowMoment.valueOf());
     var currOffset = {
       p: (currOffsetMins < 0) ? '-' : '+',
       h: Math.floor(Math.abs(currOffsetMins) / 60),
       m: Math.floor(Math.abs(currOffsetMins) % 60)
     };
-    var nextOffsetMins = -1 * rowData.zone.offset(nextChangeEpochMillis);
+    var nextOffsetMins = -1 * rowData.zone.utcOffset(nextChangeEpochMillis);
     var nextOffset = {
       p: (nextOffsetMins < 0) ? '-' : '+',
       h: Math.floor(Math.abs(nextOffsetMins) / 60),
