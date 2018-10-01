@@ -13,7 +13,7 @@ $(function() {
         nextChangeIndex: nextChangeIndex
       });
     } else {
-      console.log("Excluding zone: " zone.name);
+      console.log("Excluding zone: " + zone.name);
     }  
   });
   rowsData = _.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
