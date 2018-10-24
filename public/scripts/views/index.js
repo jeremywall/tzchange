@@ -1,3 +1,12 @@
+function getQueryParam(name) {
+  var results = new RegExp('[\?&]' + name + '=([^]*)').exec(window.location.href);
+  if (results == null){
+    return null;
+  } else {
+    return results[1] || 0;
+  }
+}
+
 function clearTable() {
   var $thead = $('<thead/>');
   var $tbody = $('<tbody/>');
@@ -8,11 +17,19 @@ function clearTable() {
 function generateTable() {
   var zones = moment.tz.names();
   var $tbody = $('<tbody/>');
-  var nowMoment = moment();
+  var ts = getQueryParam('ts');
+  var startingMoment = moment();
+  if (ts != null) {
+    if (isNaN(ts)) {
+      startingMoment = moment(ts, moment.ISO_8601);
+    } else {
+      startingMoment = moment.unix(ts);
+    }
+  }  
   var rowsData = [];
   $.each(zones, function(index, zoneName) {
     var zone = moment.tz.zone(zoneName);
-    var nextChangeIndex = _.sortedIndex(zone.untils, nowMoment.valueOf());
+    var nextChangeIndex = _.sortedIndex(zone.untils, startingMoment.valueOf());
     var nextChangeEpochMillis = zone.untils[nextChangeIndex];
     if (_.isFinite(nextChangeEpochMillis)) {
       rowsData.push({
@@ -26,14 +43,14 @@ function generateTable() {
   rowsData = _.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
   $.each(rowsData, function(index, rowData) {
     var nextChangeEpochMillis = rowData.zone.untils[rowData.nextChangeIndex];
-    var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - nowMoment.valueOf()) / 1000);
+    var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - startingMoment.valueOf()) / 1000);
     var nextChangeDiff = {
       d: Math.floor(nextChangeDiffSecs / 86400),
       h: Math.floor(nextChangeDiffSecs % 86400 / 3600) ,
       m: Math.floor(nextChangeDiffSecs % 86400 % 3600 / 60),
       s: Math.floor(nextChangeDiffSecs % 86400 % 3600 % 60)
     };
-    var currOffsetMins = -1 * rowData.zone.utcOffset(nowMoment.valueOf());
+    var currOffsetMins = -1 * rowData.zone.utcOffset(startingMoment.valueOf());
     var currOffset = {
       p: (currOffsetMins < 0) ? '-' : '+',
       h: Math.floor(Math.abs(currOffsetMins) / 60),
