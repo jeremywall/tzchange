@@ -22,7 +22,7 @@ function generateTable() {
   if (ts == null) {
     startingMoment = moment();
   } else {
-    if (_.isFinit(ts)) {
+    if (_.isFinite(ts)) {
       startingMoment = moment.unix(ts);
     } else {
       startingMoment = moment(ts);
