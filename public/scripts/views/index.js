@@ -1,4 +1,4 @@
-function cleanTable() {
+function clearTable() {
   var $thead = $('<thead/>');
   var $tbody = $('<tbody/>');
   $('table#countdown thead').replaceWith($thead);
