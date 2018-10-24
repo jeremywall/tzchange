@@ -1,4 +1,11 @@
-$(function() {
+function cleanTable() {
+  var $thead = $('<thead/>');
+  var $tbody = $('<tbody/>');
+  $('table#countdown thead').replaceWith($thead);
+  $('table#countdown tbody').replaceWith($tbody);
+}
+
+function generateTable() {
   var zones = moment.tz.names();
   var $tbody = $('<tbody/>');
   var nowMoment = moment();
@@ -80,4 +87,9 @@ $(function() {
   $('span#tz-data-version').text(moment.tz.dataVersion);
   $('table#countdown thead').replaceWith($thead);
   $('table#countdown tbody').replaceWith($tbody);
+}
+
+$(function() {
+  clearTable();
+  generateTable();
 });
