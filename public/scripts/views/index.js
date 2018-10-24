@@ -90,6 +90,7 @@ function generateTable() {
 }
 
 $(function() {
+  $('#dt-picker').datetimepicker();
   clearTable();
   generateTable();
 });
