@@ -18,14 +18,19 @@ function generateTable() {
   var zones = moment.tz.names();
   var $tbody = $('<tbody/>');
   var ts = getQueryParam('ts');
-  var startingMoment = moment();
-  if (ts != null) {
-    if (isNaN(ts)) {
-      startingMoment = moment(ts, moment.ISO_8601);
-    } else {
+  var startingMoment = null;
+  if (ts == null) {
+    startingMoment = moment();
+  } else {
+    if (_.isFinit(ts)) {
       startingMoment = moment.unix(ts);
+    } else {
+      startingMoment = moment(ts);
+      if (!startingMoment.isValid()) {
+        startingMoment = moment();
+      }
     }
-  }  
+  }
   var rowsData = [];
   $.each(zones, function(index, zoneName) {
     var zone = moment.tz.zone(zoneName);
