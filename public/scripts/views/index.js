@@ -47,62 +47,54 @@ function generateTable() {
       console.log("Excluding zone: " + zone.name);
     }  
   });
-  rowsData = _.chain(rowsData)
+  var rowsDataGrouped = _.chain(rowsData)
     .orderBy([function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc'])
     .groupBy(function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; })
     .value();
-  console.log(rowsData);
-    
-    
-    //_.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
-  $.each(rowsData, function(index, rowData) {
-    var nextChangeEpochMillis = rowData.zone.untils[rowData.nextChangeIndex];
-    var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - startingMoment.valueOf()) / 1000);
-    var nextChangeDiff = {
-      d: Math.floor(nextChangeDiffSecs / 86400),
-      h: Math.floor(nextChangeDiffSecs % 86400 / 3600) ,
-      m: Math.floor(nextChangeDiffSecs % 86400 % 3600 / 60),
-      s: Math.floor(nextChangeDiffSecs % 86400 % 3600 % 60)
-    };
-    var currOffsetMins = -1 * rowData.zone.utcOffset(startingMoment.valueOf());
-    var currOffset = {
-      p: (currOffsetMins < 0) ? '-' : '+',
-      h: Math.floor(Math.abs(currOffsetMins) / 60),
-      m: Math.floor(Math.abs(currOffsetMins) % 60)
-    };
-    var nextOffsetMins = -1 * rowData.zone.utcOffset(nextChangeEpochMillis);
-    var nextOffset = {
-      p: (nextOffsetMins < 0) ? '-' : '+',
-      h: Math.floor(Math.abs(nextOffsetMins) / 60),
-      m: Math.floor(Math.abs(nextOffsetMins) % 60)
-    };
+  console.log(rowsDataGrouped);
+  //_.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
+  $.each(rowsDataGrouped, function(groupIndex, rowDataGroup) {
+    $.each(rowDataGroup, function(rowIndex, rowData) {
+      var nextChangeEpochMillis = rowData.zone.untils[rowData.nextChangeIndex];
+      var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - startingMoment.valueOf()) / 1000);
+      var nextChangeDiff = {
+        d: Math.floor(nextChangeDiffSecs / 86400),
+        h: Math.floor(nextChangeDiffSecs % 86400 / 3600) ,
+        m: Math.floor(nextChangeDiffSecs % 86400 % 3600 / 60),
+        s: Math.floor(nextChangeDiffSecs % 86400 % 3600 % 60)
+      };
+      var currOffsetMins = -1 * rowData.zone.utcOffset(startingMoment.valueOf());
+      var currOffset = {
+        p: (currOffsetMins < 0) ? '-' : '+',
+        h: Math.floor(Math.abs(currOffsetMins) / 60),
+        m: Math.floor(Math.abs(currOffsetMins) % 60)
+      };
+      var nextOffsetMins = -1 * rowData.zone.utcOffset(nextChangeEpochMillis);
+      var nextOffset = {
+        p: (nextOffsetMins < 0) ? '-' : '+',
+        h: Math.floor(Math.abs(nextOffsetMins) / 60),
+        m: Math.floor(Math.abs(nextOffsetMins) % 60)
+      };
 
-    var newBlockOfZones = false;
-    if (index > 0) {
-      var prevRowData = rowsData[index - 1];
-      if (nextChangeEpochMillis != prevRowData.zone.untils[prevRowData.nextChangeIndex]) {
-        newBlockOfZones = true;
+      var $tr = $('<tr/>')
+      if (rowIndex == 0) {
+        $tr.addClass('time-zone-break');
       }
+      if (nextChangeDiff.d < 15) {
+        $tr.addClass('table-danger');
+      } else if (nextChangeDiff.d < 30) {
+        $tr.addClass('table-warning');
+      }
+      $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
+      $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
+      $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss ddd')));
+      $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).tz("America/Los_Angeles").format('YYYY-MM-DD HH:mm:ss ddd')));
+      $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).tz(rowData.zone.name).format('YYYY-MM-DD HH:mm:ss ddd')));
+      $tr.append($('<td/>').text(rowData.zone.name));
+      $tr.append($('<td/>').text('UTC' + currOffset.p + _.padStart(currOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
+      $tr.append($('<td/>').text('UTC' + nextOffset.p + _.padStart(nextOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
+      $tbody.append($tr);
     }
-    
-    var $tr = $('<tr/>')
-    if (newBlockOfZones) {
-      $tr.addClass('time-zone-break');
-    }
-    if (nextChangeDiff.d < 15) {
-      $tr.addClass('table-danger');
-    } else if (nextChangeDiff.d < 30) {
-      $tr.addClass('table-warning');
-    }
-    $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
-    $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
-    $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss ddd')));
-    $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).tz("America/Los_Angeles").format('YYYY-MM-DD HH:mm:ss ddd')));
-    $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).tz(rowData.zone.name).format('YYYY-MM-DD HH:mm:ss ddd')));
-    $tr.append($('<td/>').text(rowData.zone.name));
-    $tr.append($('<td/>').text('UTC' + currOffset.p + _.padStart(currOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
-    $tr.append($('<td/>').text('UTC' + nextOffset.p + _.padStart(nextOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
-    $tbody.append($tr);
   });
 
   var $thead = $('<thead class="thead-dark"/>').append(
