@@ -85,6 +85,10 @@ function generateTable() {
       } else if (nextChangeDiff.d < 30) {
         $tr.addClass('table-warning');
       }
+      if (rowIndex == 0) {
+        $tr.append($('<td rowspan="' + rowDataGroup.length + '"/>').text(groupIndex + 1));
+      }
+      $tr.append($('<td/>').text(rowIndex + 1));
       $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
       $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
       $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss ddd')));
@@ -109,17 +113,7 @@ function generateTable() {
       .append($('<th/>').text('Offset After'))
   );
 
-  var $tfoot = $('<thead class="thead-dark"/>').append(
-    $('<tr/>')
-      .append($('<th/>').text('Countdown'))
-      .append($('<th/>').text('Epoch of Change'))
-      .append($('<th/>').text('UTC Time of Change'))
-      .append($('<th/>').text('US/LA Time of Change'))
-      .append($('<th/>').text('Local Time of Change'))
-      .append($('<th/>').text('Zone'))
-      .append($('<th/>').text('Offset Before'))
-      .append($('<th/>').text('Offset After'))
-  );
+  var $tfoot = $thead.clone();
   
   $('span#tz-data-version').text(moment.tz.dataVersion);
   $('table#countdown thead').replaceWith($thead);
