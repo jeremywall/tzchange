@@ -47,7 +47,14 @@ function generateTable() {
       console.log("Excluding zone: " + zone.name);
     }  
   });
-  rowsData = _.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
+  rowsData = _.chain(rowsData)
+    .orderBy([function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc'])
+    .groupBy(function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; })
+    .value();
+  console.log(rowsData);
+    
+    
+    //_.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
   $.each(rowsData, function(index, rowData) {
     var nextChangeEpochMillis = rowData.zone.untils[rowData.nextChangeIndex];
     var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - startingMoment.valueOf()) / 1000);
