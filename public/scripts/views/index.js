@@ -89,6 +89,7 @@ function generateTable() {
     $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
     $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss ddd')));
     $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).tz("America/Los_Angeles").format('YYYY-MM-DD HH:mm:ss ddd')));
+    $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).tz(rowData.zone.name).format('YYYY-MM-DD HH:mm:ss ddd')));
     $tr.append($('<td/>').text(rowData.zone.name));
     $tr.append($('<td/>').text('UTC' + currOffset.p + _.padStart(currOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
     $tr.append($('<td/>').text('UTC' + nextOffset.p + _.padStart(nextOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
@@ -101,6 +102,7 @@ function generateTable() {
       .append($('<th/>').text('Epoch of Change'))
       .append($('<th/>').text('UTC Time of Change'))
       .append($('<th/>').text('US/LA Time of Change'))
+      .append($('<th/>').text('Local Time of Change'))
       .append($('<th/>').text('Zone'))
       .append($('<th/>').text('Offset Before'))
       .append($('<th/>').text('Offset After'))
