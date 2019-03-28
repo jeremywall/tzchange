@@ -10,7 +10,7 @@ function getQueryParam(name) {
 function clearTable() {
   var $thead = $('<thead/>');
   var $tbody = $('<tbody/>');
-  var $thead = $('<tfoot/>');
+  var $tfoot = $('<tfoot/>');
   $('table#countdown thead').replaceWith($thead);
   $('table#countdown tbody').replaceWith($tbody);
   $('table#countdown tfoot').replaceWith($tfoot);
