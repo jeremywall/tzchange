@@ -88,9 +88,9 @@ function generateTable() {
         $tr.addClass('table-warning');
       }
       if (rowIndex == 0) {
-        $tr.append($('<td rowspan="' + rowDataGroup.length + '"/>').text(groupIndex + 1));
+        $tr.append($('<td rowspan="' + rowDataGroup.length + '"/>').text(groupCounter));
       }
-      $tr.append($('<td/>').text(groupCounter));
+      $tr.append($('<td/>').text(rowIndex + 1));
       $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
       $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
       $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss ddd')));
