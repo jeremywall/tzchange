@@ -10,8 +10,10 @@ function getQueryParam(name) {
 function clearTable() {
   var $thead = $('<thead/>');
   var $tbody = $('<tbody/>');
+  var $thead = $('<tfoot/>');
   $('table#countdown thead').replaceWith($thead);
   $('table#countdown tbody').replaceWith($tbody);
+  $('table#countdown tfoot').replaceWith($tfoot);
 }
 
 function generateTable() {
@@ -108,9 +110,22 @@ function generateTable() {
       .append($('<th/>').text('Offset After'))
   );
 
+  var $tfoot = $('<thead class="thead-dark"/>').append(
+    $('<tr/>')
+      .append($('<th/>').text('Countdown'))
+      .append($('<th/>').text('Epoch of Change'))
+      .append($('<th/>').text('UTC Time of Change'))
+      .append($('<th/>').text('US/LA Time of Change'))
+      .append($('<th/>').text('Local Time of Change'))
+      .append($('<th/>').text('Zone'))
+      .append($('<th/>').text('Offset Before'))
+      .append($('<th/>').text('Offset After'))
+  );
+  
   $('span#tz-data-version').text(moment.tz.dataVersion);
   $('table#countdown thead').replaceWith($thead);
   $('table#countdown tbody').replaceWith($tbody);
+  $('table#countdown tfoot').replaceWith($tfoot);
 }
 
 $(function() {
