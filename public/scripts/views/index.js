@@ -94,7 +94,7 @@ function generateTable() {
       $tr.append($('<td/>').text('UTC' + currOffset.p + _.padStart(currOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
       $tr.append($('<td/>').text('UTC' + nextOffset.p + _.padStart(nextOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
       $tbody.append($tr);
-    }
+    })
   });
 
   var $thead = $('<thead class="thead-dark"/>').append(
