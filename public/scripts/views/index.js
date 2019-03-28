@@ -103,6 +103,8 @@ function generateTable() {
 
   var $thead = $('<thead class="thead-dark"/>').append(
     $('<tr/>')
+      .append($('<th/>').text(''))
+      .append($('<th/>').text(''))
       .append($('<th/>').text('Countdown'))
       .append($('<th/>').text('Epoch of Change'))
       .append($('<th/>').text('UTC Time of Change'))
