@@ -54,9 +54,11 @@ function generateTable() {
   console.log(rowsDataGrouped);
   //_.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
   var groupCounter = 0;
+  var rowCounter = 0;
   $.each(rowsDataGrouped, function(groupIndex, rowDataGroup) {
     groupCounter++;
     $.each(rowDataGroup, function(rowIndex, rowData) {
+      rowCounter++;
       var nextChangeEpochMillis = rowData.zone.untils[rowData.nextChangeIndex];
       var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - startingMoment.valueOf()) / 1000);
       var nextChangeDiff = {
@@ -91,6 +93,7 @@ function generateTable() {
         $tr.append($('<td rowspan="' + rowDataGroup.length + '"/>').text(groupCounter));
       }
       $tr.append($('<td/>').text(rowIndex + 1));
+      $tr.append($('<td/>').text(rowCounter));
       $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
       $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
       $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss ddd')));
@@ -105,6 +108,7 @@ function generateTable() {
 
   var $thead = $('<thead class="thead-dark"/>').append(
     $('<tr/>')
+      .append($('<th/>').text(''))
       .append($('<th/>').text(''))
       .append($('<th/>').text(''))
       .append($('<th/>').text('Countdown'))
