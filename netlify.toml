@@ -7,6 +7,10 @@
   directory = "./functions"
 
 [[redirects]]
+  from = "/next-change.json"
+  to = "/.netlify/functions/next-change"
+  status = 200
+[[redirects]]
   from = "/test3"
   to = "/.netlify/functions/test2"
   status = 200
