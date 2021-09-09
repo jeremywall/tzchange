@@ -3,6 +3,6 @@ const _ = require("lodash");
 exports.handler = async function(event, context) {
     return {
         statusCode: 200,
-        body: JSON.stringify({message: "Hello World!!!! " + _.VERSION})
+        body: JSON.stringify({message: "Hello World!!!! " + new Date().getTime() + " " + _.VERSION})
     };
 }
