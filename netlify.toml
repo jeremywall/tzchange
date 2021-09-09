@@ -1,7 +1,7 @@
 [build]
   command = "npm run build" # your build command
   publish = "./dist" # where your production ready client code lives AFTER your build command has run
-  # functions = "./functions" # where your production ready lambda functions live AFTER your build command has run
+  ### functions = "./functions" # where your production ready lambda functions live AFTER your build command has run
 
 [functions]
   directory = "./functions"
@@ -9,10 +9,6 @@
 [[redirects]]
   from = "/next-change.json"
   to = "/.netlify/functions/next-change"
-  status = 200
-[[redirects]]
-  from = "/test3"
-  to = "/.netlify/functions/test2"
   status = 200
 [[redirects]]
   from = "/*"
