@@ -80,7 +80,7 @@ function clearTable() {
 function generateTable() {
   console.log(tc);
   var utc = tc.nowUtc();
-  var zoneNames = tc.getTzDatabase().getZoneNames();
+  var zoneNames = tc.TzDatabase().getZoneNames();
   console.log(utc);
   console.log(zoneNames);
 
