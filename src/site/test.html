@@ -79,8 +79,10 @@ function clearTable() {
 
 function generateTable() {
   var utc = tc.nowUtc();
+  var zoneNames = tz.zoneNames();
   console.log(utc);
-  console.log(tzdataFactory);
+  console.log(zoneNames);
+
   return;
   var zones = moment.tz.names();
   var $tbody = $('<tbody/>');
@@ -188,7 +190,7 @@ function generateTable() {
 
   var $tfoot = $thead.clone();
   
-  $('span#tzdb-version').text(moment.tz.dataVersion);
+  $('span#tzdb-version').text(tzdataFactory.version);
   $('table#tz-changes thead').replaceWith($thead);
   $('table#tz-changes tbody').replaceWith($tbody);
   $('table#tz-changes tfoot').replaceWith($tfoot);
