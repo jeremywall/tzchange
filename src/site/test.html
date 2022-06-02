@@ -116,7 +116,7 @@ function generateTable() {
   console.log(rowsData);
   var rowsDataGrouped = _.chain(rowsData)
     .orderBy(['nextChange', 'zoneName'], ['asc', 'asc'])
-    .groupBy(['nextChange'])
+    .groupBy('nextChange')
     .value();
   console.log(rowsDataGrouped);
 
