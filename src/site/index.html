@@ -36,7 +36,6 @@ tr.time-zone-break {
             <div id="" class="col">
                 <a href="https://www.timeanddate.com/news/time/">Time Zone News</a> | 
                 <a href="https://www.iana.org/time-zones">IANA Time Zone Database</a> | 
-                <a href="https://momentjs.com/timezone/">Moment Timezone</a> | 
                 <a href="/next-change.json">JSON Version</a> | 
                 <a href="https://github.com/jeremywall/tzchange">GitHub</a>
             </div>
@@ -55,15 +54,16 @@ tr.time-zone-break {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.1/js/bootstrap.bundle.min.js" integrity="sha512-trzlduO3EdG7Q0xK4+A+rPbcolVt37ftugUSOvrHhLR5Yw5rsfWXcpB3CPuEBcRBCHpc+j18xtQ6YrtVPKCdsg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js" integrity="sha512-6ORWJX/LrnSjBzwefdNUyLCMTIsGoNP6NftMy2UAm1JBm6PRZCO1d7OHBStWpVFZLO+RerTvqX/Z9mBFfCJZ4A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js" integrity="sha512-fFkDTD3GpiLXZBIrfRu0etHZkCdWPkcNy4TjDqI3gQFVfbbDRFG5vV7w3mIeeOCvUY5cEKTUFiTetIsFtWjF1Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://unpkg.com/tzdata-factory@1.0.30/tzdata-factory.js"></script>
+<script src="https://unpkg.com/tzdata@1.0.30/tzdata.js"></script>
+<script src="https://unpkg.com/timezonecomplete@5.12.4/dist/timezonecomplete.min.js"></script>
 <script>
 function getQueryParam(name) {
   var results = new RegExp('[\?&]' + name + '=([^]*)').exec(window.location.href);
   if (results == null){
     return null;
   } else {
-    return decodeURIComponent(results[1]) || 0;
+    return decodeURIComponent(results[1]);
   }
 }
 
@@ -77,68 +77,75 @@ function clearTable() {
 }
 
 function generateTable() {
-  var zones = moment.tz.names();
-  var $tbody = $('<tbody/>');
-  var ts = getQueryParam('ts');
-  var startingMoment = null;
-  if (ts == null) {
-    startingMoment = moment();
+
+  var tzdb = tc.TzDatabase.instance();
+  var zones = tzdb.zoneNames();
+  var tsSecs = getQueryParam('ts');
+  if (_.isNil(tsSecs)) {
+    tsSecs = Math.floor(Date.now() / 1000);
   } else {
-    if (!_.isNaN(_.toNumber(ts))) {
-      startingMoment = moment.unix(ts);
-    } else {
-      startingMoment = moment(ts);
-      if (!startingMoment.isValid()) {
-        startingMoment = moment();
-      }
-    }
+    tsSecs = _.toNumber(tsSecs);
+    if (!_.isFinite(tsSecs)) {
+      tsSecs = Math.floor(Date.now() / 1000);
+    }    
   }
+  var tsMillis = tsSecs * 1000;
+
   var rowsData = [];
   $.each(zones, function(index, zoneName) {
-    var zone = moment.tz.zone(zoneName);
-    var nextChangeIndex = _.sortedIndex(zone.untils, startingMoment.valueOf());
-    var nextChangeEpochMillis = zone.untils[nextChangeIndex];
-    if (_.isFinite(nextChangeEpochMillis)) {
-      rowsData.push({
-        zone: zone,
-        nextChangeIndex: nextChangeIndex
-      });
-    } else {
-      console.log("Excluding zone: " + zone.name);
-    }  
+    try {
+      var nextChangeEpochMillis = tzdb.nextDstChange(zoneName, tsMillis);
+      if (_.isFinite(nextChangeEpochMillis)) {
+        //console.log('next change for ' + zoneName + ' is ' + nextChangeEpochMillis);
+        rowsData.push({
+          zoneName: zoneName,
+          nextChange: nextChangeEpochMillis
+        });
+      } else {
+        //console.log("Excluding zone: " + zoneName + " as it has no future DST change");
+      }
+    } catch(error) {
+      console.log("Error with zone: " + zoneName);
+      console.log(error)
+    }
   });
+  //console.log(rowsData);
   var rowsDataGrouped = _.chain(rowsData)
-    .orderBy([function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc'])
-    .groupBy(function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; })
+    .orderBy(['nextChange', 'zoneName'], ['asc', 'asc'])
+    .groupBy('nextChange')
     .value();
-  console.log(rowsDataGrouped);
-  //_.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
+  //console.log(rowsDataGrouped);
+
   var groupCounter = 0;
   var rowCounter = 0;
+  var $tbody = $('<tbody/>');
+  var timezoneLA = tc.TimeZone.zone("America/Los_Angeles");
   $.each(rowsDataGrouped, function(groupIndex, rowDataGroup) {
     groupCounter++;
     $.each(rowDataGroup, function(rowIndex, rowData) {
       rowCounter++;
-      var nextChangeEpochMillis = rowData.zone.untils[rowData.nextChangeIndex];
-      var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - startingMoment.valueOf()) / 1000);
+      var nextChangeEpochMillis = rowData.nextChange;
+      var nextChangeDiffSecs = Math.floor((nextChangeEpochMillis - tsMillis) / 1000);
       var nextChangeDiff = {
         d: Math.floor(nextChangeDiffSecs / 86400),
         h: Math.floor(nextChangeDiffSecs % 86400 / 3600) ,
         m: Math.floor(nextChangeDiffSecs % 86400 % 3600 / 60),
         s: Math.floor(nextChangeDiffSecs % 86400 % 3600 % 60)
       };
-      var currOffsetMins = -1 * rowData.zone.utcOffset(startingMoment.valueOf());
+      var currOffsetMins = -1 * tzdb.totalOffset(rowData.zoneName, tsMillis).minutes();
       var currOffset = {
         p: (currOffsetMins < 0) ? '-' : '+',
         h: Math.floor(Math.abs(currOffsetMins) / 60),
         m: Math.floor(Math.abs(currOffsetMins) % 60)
       };
-      var nextOffsetMins = -1 * rowData.zone.utcOffset(nextChangeEpochMillis);
+      var nextOffsetMins = -1 * tzdb.totalOffset(rowData.zoneName, nextChangeEpochMillis).minutes();
       var nextOffset = {
         p: (nextOffsetMins < 0) ? '-' : '+',
         h: Math.floor(Math.abs(nextOffsetMins) / 60),
         m: Math.floor(Math.abs(nextOffsetMins) % 60)
       };
+
+      var nextChangeEpochDateTime = new tc.DateTime(nextChangeEpochMillis, tc.TimeZone.utc());
 
       var $tr = $('<tr/>')
       if (rowIndex == 0) {
@@ -155,11 +162,11 @@ function generateTable() {
       $tr.append($('<td/>').text(rowIndex + 1));
       $tr.append($('<td/>').text(rowCounter));
       $tr.append($('<td/>').text(nextChangeDiff.d + 'd ' + nextChangeDiff.h + 'h ' + nextChangeDiff.m + 'm ' + nextChangeDiff.s + 's '));
-      $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('X')));
-      $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis).format('YYYY-MM-DD HH:mm:ss ddd')));
-      $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis - 1000).tz("America/Los_Angeles").format('YYYY-MM-DD HH:mm:ss ddd')));
-      $tr.append($('<td/>').text(moment.utc(nextChangeEpochMillis - 1000).tz(rowData.zone.name).format('YYYY-MM-DD HH:mm:ss ddd')));
-      $tr.append($('<td/>').text(rowData.zone.name));
+      $tr.append($('<td/>').text(Math.floor(nextChangeEpochDateTime.unixUtcMillis() / 1000)));
+      $tr.append($('<td/>').text(nextChangeEpochDateTime.format('yyyy-MM-dd HH:mm:ss EEE')));
+      $tr.append($('<td/>').text(nextChangeEpochDateTime.sub(1, tc.TimeUnit.Second).toZone(timezoneLA).format('yyyy-MM-dd HH:mm:ss EEE')));
+      $tr.append($('<td/>').text(nextChangeEpochDateTime.sub(1, tc.TimeUnit.Second).toZone(tc.TimeZone.zone(rowData.zoneName)).format('yyyy-MM-dd HH:mm:ss EEE')));
+      $tr.append($('<td/>').text(rowData.zoneName));
       $tr.append($('<td/>').text('UTC' + currOffset.p + _.padStart(currOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
       $tr.append($('<td/>').text('UTC' + nextOffset.p + _.padStart(nextOffset.h, 2, '0') + _.padStart(currOffset.m, 2, '0')));
       $tbody.append($tr);
@@ -183,7 +190,7 @@ function generateTable() {
 
   var $tfoot = $thead.clone();
   
-  $('span#tzdb-version').text(moment.tz.dataVersion);
+  $('span#tzdb-version').text(tzdataFactory.version);
   $('table#tz-changes thead').replaceWith($thead);
   $('table#tz-changes tbody').replaceWith($tbody);
   $('table#tz-changes tfoot').replaceWith($tfoot);

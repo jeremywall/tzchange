@@ -1,22 +1,34 @@
 const _ = require("lodash");
-const moment = require("moment-timezone");
+const tzdata = require('tzdata');
+const tc = require("timezonecomplete");
 
 exports.handler = async function(event, context) {
     let data = [];
-    let zones = moment.tz.names();
-    let nowMoment = moment();
+
+    let tzdb = tc.TzDatabase.instance();
+    let zones = tzdb.zoneNames();
+
+    let tsMillis = Date.now();
+
     _.each(zones, function(zoneName) {
-      let zone = moment.tz.zone(zoneName);
-      let nextChangeIndex = _.sortedIndex(zone.untils, nowMoment.valueOf());
-      let nextChangeEpochMillis = zone.untils[nextChangeIndex];
-      if (_.isFinite(nextChangeEpochMillis)) {
-        data.push({
-          'epoch_of_change': moment.utc(nextChangeEpochMillis).format('X'),
-          'zone': zoneName
-        });
+      try {
+        var nextChangeEpochMillis = tzdb.nextDstChange(zoneName, tsMillis);
+        if (_.isFinite(nextChangeEpochMillis)) {
+          //console.log('next change for ' + zoneName + ' is ' + nextChangeEpochMillis);
+          data.push({
+            epoch_of_change: nextChangeEpochMillis,
+            zone: zoneName
+          });
+        } else {
+          //console.log("Excluding zone: " + zoneName + " as it has no future DST change");
+        }
+      } catch(error) {
+        console.log("Error with zone: " + zoneName);
+        console.log(error)
       }
     });
     data = _.orderBy(data, ['epoch_of_change', 'zone'], ['asc', 'asc']);
+
     return {
         statusCode: 200,
         headers: {

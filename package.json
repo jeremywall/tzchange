@@ -6,6 +6,8 @@
     },
     "dependencies": {
       "lodash": "4.17.21",
-      "moment-timezone": "0.5"
+      "tzdata-factory": "1.0.30",
+      "tzdata": "1.0.30",
+      "timezonecomplete": "5.12.4"
     }
   }
