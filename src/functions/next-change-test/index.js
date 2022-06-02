@@ -1,5 +1,4 @@
 const _ = require("lodash");
-const moment = require("moment-timezone");
 const tzdata = require('tzdata');
 const tc = require("timezonecomplete");
 
