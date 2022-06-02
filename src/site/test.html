@@ -86,6 +86,7 @@ function generateTable() {
     tsSecs = Math.floor(Date.now() / 1000);
   }
   var tsMillis = tsSecs * 1000;
+  console.log('tsMillis', tsMillis);
 
   var rowsData = [];
   $.each(zones, function(index, zoneName) {
