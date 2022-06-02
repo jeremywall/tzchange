@@ -28,6 +28,7 @@ exports.handler = async function(event, context) {
         console.log(error)
       }
     });
+    data = _.orderBy(data, ['epoch_of_change', 'zone'], ['asc', 'asc']);
 
     return {
         statusCode: 200,
