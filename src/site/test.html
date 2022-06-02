@@ -92,6 +92,7 @@ function generateTable() {
     try {
       var nextChangeEpochMillis = tzdb.nextDstChange(zoneName, tsMillis);
       if (_.isFinite(nextChangeEpochMillis)) {
+        console.log('next change for ' + zoneName + ' is ' + nextChangeEpochMillis);
         rowsData.push({
           zoneName: zoneName,
           nextChange: nextChangeEpochMillis
