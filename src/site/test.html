@@ -86,7 +86,7 @@ function generateTable() {
   var zones = tzdb.zoneNames();
   var tsSecs = _.toNumber(getQueryParam('ts'));
   console.log('tsSecs', tsSecs);
-  if (!_.isFinite(tsSecs) || _.isNil) {
+  if (!_.isFinite(tsSecs)) {
     tsSecs = Math.floor(Date.now() / 1000);
     console.log('tsSecs2', tsSecs);
   }
