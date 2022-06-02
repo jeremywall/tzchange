@@ -109,12 +109,12 @@ function generateTable() {
       console.log(error)
     }
   });
-  console.log(rowsData);
+  //console.log(rowsData);
   var rowsDataGrouped = _.chain(rowsData)
     .orderBy(['nextChange', 'zoneName'], ['asc', 'asc'])
     .groupBy('nextChange')
     .value();
-  console.log(rowsDataGrouped);
+  //console.log(rowsDataGrouped);
 
   var groupCounter = 0;
   var rowCounter = 0;
