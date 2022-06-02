@@ -63,8 +63,10 @@ function getQueryParam(name) {
   var results = new RegExp('[\?&]' + name + '=([^]*)').exec(window.location.href);
   console.log('results', results);
   if (results == null){
+    console.log("aaa");
     return null;
   } else {
+    console.log("bbb");
     return decodeURIComponent(results[1]);
   }
 }
@@ -84,7 +86,7 @@ function generateTable() {
   var zones = tzdb.zoneNames();
   var tsSecs = _.toNumber(getQueryParam('ts'));
   console.log('tsSecs', tsSecs);
-  if (!_.isFinite(tsSecs)) {
+  if (!_.isFinite(tsSecs) || _.isNil) {
     tsSecs = Math.floor(Date.now() / 1000);
     console.log('tsSecs2', tsSecs);
   }
