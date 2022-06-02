@@ -92,6 +92,10 @@ function generateTable() {
   } else {
     tsSecs = _.toNumber(tsSecs);
     console.log('tsSecs3', tsSecs);
+    if (!_.isFinite(tsSecs)) {
+      tsSecs = Math.floor(Date.now() / 1000);
+      console.log('tsSecs4', tsSecs);
+    }    
   }
   var tsMillis = tsSecs * 1000;
   console.log('tsMillis', tsMillis);
