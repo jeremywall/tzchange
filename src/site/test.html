@@ -61,12 +61,9 @@ tr.time-zone-break {
 <script>
 function getQueryParam(name) {
   var results = new RegExp('[\?&]' + name + '=([^]*)').exec(window.location.href);
-  console.log('results', results);
   if (results == null){
-    console.log("aaa");
     return null;
   } else {
-    console.log("bbb");
     return decodeURIComponent(results[1]);
   }
 }
