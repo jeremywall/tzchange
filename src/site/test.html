@@ -84,11 +84,14 @@ function generateTable() {
 
   var tzdb = tc.TzDatabase.instance();
   var zones = tzdb.zoneNames();
-  var tsSecs = _.toNumber(getQueryParam('ts'));
+  var tsSecs = getQueryParam('ts');
   console.log('tsSecs', tsSecs);
-  if (!_.isFinite(tsSecs)) {
+  if (_.isNil(tsSecs)) {
     tsSecs = Math.floor(Date.now() / 1000);
     console.log('tsSecs2', tsSecs);
+  } else {
+    tsSecs = _.toNumber(tsSecs);
+    console.log('tsSecs3', tsSecs);
   }
   var tsMillis = tsSecs * 1000;
   console.log('tsMillis', tsMillis);
@@ -104,7 +107,7 @@ function generateTable() {
           nextChange: nextChangeEpochMillis
         });
       } else {
-        console.log("Excluding zone: " + zoneName + " as it has no future DST change");
+        //console.log("Excluding zone: " + zoneName + " as it has no future DST change");
       }
     } catch(error) {
       console.log("Error with zone: " + zoneName);
