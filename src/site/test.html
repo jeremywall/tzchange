@@ -86,6 +86,7 @@ function generateTable() {
   console.log('tsSecs', tsSecs);
   if (!_.isFinite(tsSecs)) {
     tsSecs = Math.floor(Date.now() / 1000);
+    console.log('tsSecs2', tsSecs);
   }
   var tsMillis = tsSecs * 1000;
   console.log('tsMillis', tsMillis);
