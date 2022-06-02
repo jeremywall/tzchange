@@ -112,7 +112,7 @@ function generateTable() {
     .groupBy(function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; })
     .value();
   console.log(rowsDataGrouped);
-  //_.orderBy(rowsData, [function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc']);
+
   var groupCounter = 0;
   var rowCounter = 0;
   $.each(rowsDataGrouped, function(groupIndex, rowDataGroup) {
