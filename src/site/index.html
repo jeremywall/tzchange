@@ -107,6 +107,7 @@ function generateTable() {
       console.log("Excluding zone: " + zone.name);
     }  
   });
+  console.log(rowsData);
   var rowsDataGrouped = _.chain(rowsData)
     .orderBy([function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; }, 'zone.name'], ['asc', 'asc'])
     .groupBy(function(rowData) { return rowData.zone.untils[rowData.nextChangeIndex]; })
