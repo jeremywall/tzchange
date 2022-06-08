@@ -18,6 +18,7 @@ exports.handler = async function(event, context) {
 
       }
   });
+  versions = {};
   
 
 
