@@ -7,8 +7,8 @@
     "dependencies": {
       "lodash": "4.17.21",
       "pug": "3.0.2",
-      "tzdata-factory": "1.0.30",
-      "tzdata": "1.0.30",
+      "tzdata-factory": "1.0.33",
+      "tzdata": "1.0.33",
       "timezonecomplete": "5.12.4"
     }
   }
