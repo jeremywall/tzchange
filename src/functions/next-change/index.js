@@ -1,9 +1,13 @@
 const _ = require("lodash");
 const tzdata = require('tzdata');
 const tc = require("timezonecomplete");
+const tzdataFactory = require('tzdata-factory');
 
 exports.handler = async function(event, context) {
-    let data = [];
+    let response = {
+        version: tzdataFactory.version,
+        zones: []
+    };
 
     let tzdb = tc.TzDatabase.instance();
     let zones = tzdb.zoneNames();
@@ -15,7 +19,7 @@ exports.handler = async function(event, context) {
         var nextChangeEpochMillis = tzdb.nextDstChange(zoneName, tsMillis);
         if (_.isFinite(nextChangeEpochMillis)) {
           //console.log('next change for ' + zoneName + ' is ' + nextChangeEpochMillis);
-          data.push({
+          response.zones.push({
             epoch_of_change: nextChangeEpochMillis,
             zone: zoneName
           });
@@ -27,13 +31,13 @@ exports.handler = async function(event, context) {
         console.log(error)
       }
     });
-    data = _.orderBy(data, ['epoch_of_change', 'zone'], ['asc', 'asc']);
+    response.zones = _.orderBy(response.zones, ['epoch_of_change', 'zone'], ['asc', 'asc']);
 
     return {
         statusCode: 200,
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(response)
     };
 }
