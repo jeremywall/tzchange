@@ -17,7 +17,7 @@ exports.handler = async function(event, context) {
 
       }
   });
-//  versions = {};
+  versions = {};
 
   return {
     statusCode: 200,
