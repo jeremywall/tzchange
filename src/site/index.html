@@ -87,20 +87,41 @@ function clearTable() {
   $('table#tz-changes tfoot').replaceWith($tfoot);
 }
 
+function getDateParameter() {
+  var date = getQueryParam('date');
+  var dateUnix = Date.parse(date);
+  if (!_.isFinite(dateUnix)) {
+    return null;
+  }
+  return dateUnix;
+}
+
+function getTimestampParameter() {
+  var tsSecs = getQueryParam('ts');
+  if (_.isNil(tsSecs)) {
+    return null;
+  }
+  tsSecs = _.toNumber(tsSecs);
+  if (!_.isFinite(tsSecs)) {
+    return null;
+  }
+  return tsSecs * 1000;
+}
+
 function generateTable() {
 
   var tzdb = tc.TzDatabase.instance();
   var zones = tzdb.zoneNames();
-  var tsSecs = getQueryParam('ts');
-  if (_.isNil(tsSecs)) {
-    tsSecs = Math.floor(Date.now() / 1000);
-  } else {
-    tsSecs = _.toNumber(tsSecs);
-    if (!_.isFinite(tsSecs)) {
-      tsSecs = Math.floor(Date.now() / 1000);
-    }    
+
+  var dateResult = getDateParameter();
+  var tsResult = getTimestampParameter();
+
+  var tsMillis = Date.now();
+  if (dateResult != null) {
+    tsMillis = dateResult;
+  } else if (tsResult != null) {
+    tsMillis = tsResult;
   }
-  var tsMillis = tsSecs * 1000;
 
   var rowsData = [];
   $.each(zones, function(index, zoneName) {
