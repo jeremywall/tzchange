@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.1/css/bootstrap.min.css" integrity="sha512-6KY5s6UI5J7SVYuZB4S/CZMyPylqyyNZco376NM2Z8Sb8OxEdp02e1jkKk/wZxIEmjQ6DRCEBhni+gpr9c4tvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/css/bootstrap.min.css" integrity="sha512-CpIKUSyh9QX2+zSdfGP+eWLx23C8Dj9/XmHjZY2uDtfkdLGo0uY12jgcnkX9vXOgYajEKb/jiw67EYm+kBf+6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<!--<link rel="stylesheet" href="https://unpkg.com/vanillajs-datepicker@1.2.0/dist/css/datepicker.min.css">-->
 <style type="text/css">
 * {
   font-family: 'Roboto', sans-serif;
@@ -32,6 +33,15 @@ tr.time-zone-break {
         <div class="row">
             <div id="" class="col">Time Zone Database Version: <span id="tzdb-version"></span></div>
         </div>
+<!--
+        <div class="row">
+            <div class="form-floating input-group mb-4">
+                <i class="bi bi-calendar-date input-group-text"></i>
+                <input type="text" id="datepicker2" class="datepicker_input form-control" placeholder="DD/MM/YYYY" required>
+                <label for="datepicker2">Date input label 2</label>
+            </div>
+        </div>
+-->
         <div class="row">
             <div id="" class="col">
                 <a href="https://www.timeanddate.com/news/time/">Time Zone News</a> | 
@@ -51,12 +61,13 @@ tr.time-zone-break {
         </div>
     </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.1/js/bootstrap.bundle.min.js" integrity="sha512-trzlduO3EdG7Q0xK4+A+rPbcolVt37ftugUSOvrHhLR5Yw5rsfWXcpB3CPuEBcRBCHpc+j18xtQ6YrtVPKCdsg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js" integrity="sha512-6ORWJX/LrnSjBzwefdNUyLCMTIsGoNP6NftMy2UAm1JBm6PRZCO1d7OHBStWpVFZLO+RerTvqX/Z9mBFfCJZ4A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/js/bootstrap.bundle.min.js" integrity="sha512-BOsvKbLb0dB1IVplOL9ptU1EYA+LuCKEluZWRUYG73hxqNBU85JBIBhPGwhQl7O633KtkjMv8lvxZcWP+N3V3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.slim.min.js" integrity="sha512-yBpuflZmP5lwMzZ03hiCLzA94N0K2vgBtJgqQ2E1meJzmIBfjbb7k4Y23k2i2c/rIeSUGc7jojyIY5waK3ZxCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://unpkg.com/tzdata-factory@1.0.35/tzdata-factory.js"></script>
 <script src="https://unpkg.com/tzdata@1.0.35/tzdata.js"></script>
 <script src="https://unpkg.com/timezonecomplete@5.12.4/dist/timezonecomplete.min.js"></script>
+<!--<script src="https://unpkg.com/vanillajs-datepicker@1.2.0/dist/js/datepicker-full.min.js"></script>-->
 <script>
 function getQueryParam(name) {
   var results = new RegExp('[\?&]' + name + '=([^]*)').exec(window.location.href);
@@ -76,20 +87,41 @@ function clearTable() {
   $('table#tz-changes tfoot').replaceWith($tfoot);
 }
 
+function getDateParameter() {
+  var date = getQueryParam('date');
+  var dateUnix = Date.parse(date);
+  if (!_.isFinite(dateUnix)) {
+    return null;
+  }
+  return dateUnix;
+}
+
+function getTimestampParameter() {
+  var tsSecs = getQueryParam('ts');
+  if (_.isNil(tsSecs)) {
+    return null;
+  }
+  tsSecs = _.toNumber(tsSecs);
+  if (!_.isFinite(tsSecs)) {
+    return null;
+  }
+  return tsSecs * 1000;
+}
+
 function generateTable() {
 
   var tzdb = tc.TzDatabase.instance();
   var zones = tzdb.zoneNames();
-  var tsSecs = getQueryParam('ts');
-  if (_.isNil(tsSecs)) {
-    tsSecs = Math.floor(Date.now() / 1000);
-  } else {
-    tsSecs = _.toNumber(tsSecs);
-    if (!_.isFinite(tsSecs)) {
-      tsSecs = Math.floor(Date.now() / 1000);
-    }    
+
+  var dateResult = getDateParameter();
+  var tsResult = getTimestampParameter();
+
+  var tsMillis = Date.now();
+  if (dateResult != null) {
+    tsMillis = dateResult;
+  } else if (tsResult != null) {
+    tsMillis = tsResult;
   }
-  var tsMillis = tsSecs * 1000;
 
   var rowsData = [];
   $.each(zones, function(index, zoneName) {
@@ -197,6 +229,27 @@ function generateTable() {
 }
 
 $(function() {
+  /*
+  const getDatePickerTitle = elem => {
+    // From the label or the aria-label
+    const label = elem.nextElementSibling;
+    let titleText = '';
+    if (label && label.tagName === 'LABEL') {
+      titleText = label.textContent;
+    } else {
+      titleText = elem.getAttribute('aria-label') || '';
+    }
+    return titleText;
+  }
+
+  const elems = document.querySelectorAll('.datepicker_input');
+  for (const elem of elems) {
+    const datepicker = new Datepicker(elem, {
+      'format': 'dd/mm/yyyy', // UK format
+      title: getDatePickerTitle(elem)
+    });
+  } 
+  */
   clearTable();
   generateTable();
 });
