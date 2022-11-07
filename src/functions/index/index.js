@@ -1,5 +1,4 @@
 const _ = require("lodash");
-const pug = require('pug');
 const tzdata = require('tzdata');
 const tc = require("timezonecomplete");
 const fs = require('fs');
