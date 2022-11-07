@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/css/bootstrap.min.css" integrity="sha512-CpIKUSyh9QX2+zSdfGP+eWLx23C8Dj9/XmHjZY2uDtfkdLGo0uY12jgcnkX9vXOgYajEKb/jiw67EYm+kBf+6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-<link rel="stylesheet" href="https://unpkg.com/vanillajs-datepicker@1.2.0/dist/css/datepicker.min.css">
+<!--<link rel="stylesheet" href="https://unpkg.com/vanillajs-datepicker@1.2.0/dist/css/datepicker.min.css">-->
 <style type="text/css">
 * {
   font-family: 'Roboto', sans-serif;
@@ -33,6 +33,7 @@ tr.time-zone-break {
         <div class="row">
             <div id="" class="col">Time Zone Database Version: <span id="tzdb-version"></span></div>
         </div>
+<!--
         <div class="row">
             <div class="form-floating input-group mb-4">
                 <i class="bi bi-calendar-date input-group-text"></i>
@@ -40,6 +41,7 @@ tr.time-zone-break {
                 <label for="datepicker2">Date input label 2</label>
             </div>
         </div>
+-->
         <div class="row">
             <div id="" class="col">
                 <a href="https://www.timeanddate.com/news/time/">Time Zone News</a> | 
@@ -65,7 +67,7 @@ tr.time-zone-break {
 <script src="https://unpkg.com/tzdata-factory@1.0.35/tzdata-factory.js"></script>
 <script src="https://unpkg.com/tzdata@1.0.35/tzdata.js"></script>
 <script src="https://unpkg.com/timezonecomplete@5.12.4/dist/timezonecomplete.min.js"></script>
-<script src="https://unpkg.com/vanillajs-datepicker@1.2.0/dist/js/datepicker-full.min.js"></script>
+<!--<script src="https://unpkg.com/vanillajs-datepicker@1.2.0/dist/js/datepicker-full.min.js"></script>-->
 <script>
 function getQueryParam(name) {
   var results = new RegExp('[\?&]' + name + '=([^]*)').exec(window.location.href);
@@ -206,7 +208,7 @@ function generateTable() {
 }
 
 $(function() {
-
+  /*
   const getDatePickerTitle = elem => {
     // From the label or the aria-label
     const label = elem.nextElementSibling;
@@ -226,7 +228,7 @@ $(function() {
       title: getDatePickerTitle(elem)
     });
   } 
-
+  */
   clearTable();
   generateTable();
 });
